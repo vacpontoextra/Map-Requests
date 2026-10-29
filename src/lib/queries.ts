@@ -30,8 +30,9 @@ export async function listMaps(f: ListFilters): Promise<MapDTO[]> {
 
   const q = f.q?.trim();
   if (q) {
-    // SQLite's LIKE is case-insensitive for ASCII, which is what we want here.
-    where.OR = [{ name: { contains: q } }, { author: { contains: q } }, { username: { contains: q } }];
+    // Case-insensitive "contains" (ILIKE on PostgreSQL).
+    const contains = { contains: q, mode: 'insensitive' as const };
+    where.OR = [{ name: contains }, { author: contains }, { username: contains }];
   }
 
   const direction = f.sort === 'oldest' ? 'asc' : 'desc';

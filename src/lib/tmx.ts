@@ -17,7 +17,8 @@
 import { getEnv } from './env';
 
 const TMX_BASE = 'https://trackmania.exchange';
-const FETCH_TIMEOUT_MS = 8000;
+// Kept short: v1 + v2 fallback must finish well inside a serverless function's time limit.
+const FETCH_TIMEOUT_MS = 5000;
 
 // ---------------------------------------------------------------------------
 // Public types

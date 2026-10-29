@@ -1,15 +1,17 @@
-// Prisma schema – SQLite by default.
-// To use PostgreSQL/MySQL: change `provider`, set DATABASE_URL, delete the
-// prisma/migrations folder and run `npx prisma migrate dev --name init`.
-// (See README → "Using PostgreSQL".)
+// Prisma schema – PostgreSQL (works with Neon, Supabase, Railway, local Postgres…).
+//
+// DATABASE_URL = connection string the app uses at runtime (a *pooled* one on serverless hosts)
+// DIRECT_URL   = direct (non-pooled) connection used by `prisma migrate deploy`
+// On a plain Postgres server both can be the same value.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model MapRequest {
@@ -20,7 +22,7 @@ model MapRequest {
   mapUid       String                    // Nadeo map UID
   name         String
   author       String
-  tags         String    @default("[]")  // JSON array of tag names (SQLite has no arrays)
+  tags         String    @default("[]")  // JSON array of tag names, stored as text
   thumbnailUrl String?
   length       String?                   // e.g. "45 secs"
   difficulty   String?                   // e.g. "Intermediate"
@@ -30,7 +32,7 @@ model MapRequest {
   // --- Who/when ---
   username     String                    // Twitch name as displayed
   usernameKey  String                    // lowercase copy for case-insensitive lookups
-  requestedAt  DateTime  @default(now()) // server time, stored as UTC; date + time both derive from this
+  requestedAt  DateTime  @default(now()) // server time (UTC); date + time both derive from this
 
   // --- Status ---
   played       Boolean   @default(false)

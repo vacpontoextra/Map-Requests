@@ -1,15 +1,31 @@
 services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tm
+      POSTGRES_PASSWORD: tm-change-me
+      POSTGRES_DB: trackmania
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tm -d trackmania"]
+      interval: 5s
+      retries: 10
+
   web:
     build: .
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "3000:3000"
     env_file: .env
     environment:
-      # Overrides DATABASE_URL from .env so the DB lands on the named volume.
-      DATABASE_URL: "file:/data/requests.db"
-    volumes:
-      - tm-data:/data
+      # Override the DB URLs from .env so the app talks to the bundled Postgres.
+      DATABASE_URL: "postgresql://tm:tm-change-me@db:5432/trackmania"
+      DIRECT_URL: "postgresql://tm:tm-change-me@db:5432/trackmania"
 
 volumes:
-  tm-data:
+  pg-data:

@@ -16,6 +16,7 @@ import { submitRequest, type SubmitResult } from '@/lib/requests';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+export const maxDuration = 30; // seconds (Vercel); TMX lookups can take a moment
 
 interface Params {
   map: string;

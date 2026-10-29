@@ -19,12 +19,9 @@ COPY . .
 RUN npm run build
 
 ENV NODE_ENV=production \
-    DATABASE_URL="file:/data/requests.db" \
     PORT=3000
 
-# SQLite lives here – mount a volume to keep data across deploys.
-VOLUME ["/data"]
 EXPOSE 3000
 
-# Apply migrations, then start the server.
+# Apply migrations (needs DATABASE_URL + DIRECT_URL), then start the server.
 CMD ["npm", "run", "start:prod"]

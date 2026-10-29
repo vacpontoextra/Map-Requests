@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "MapRequest" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "mapId" INTEGER NOT NULL,
     "mapUid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -13,9 +13,11 @@ CREATE TABLE "MapRequest" (
     "tmxUrl" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "usernameKey" TEXT NOT NULL,
-    "requestedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "requestedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "played" BOOLEAN NOT NULL DEFAULT false,
-    "playedAt" DATETIME
+    "playedAt" TIMESTAMP(3),
+
+    CONSTRAINT "MapRequest_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

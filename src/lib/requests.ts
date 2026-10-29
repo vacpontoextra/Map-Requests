@@ -93,6 +93,22 @@ export async function submitRequest({ map, user, enforceLimits }: SubmitOptions)
 
   // --- 5. Duplicate + per-user caps -------------------------------------------------
   if (enforceLimits) {
+    // Database-backed cooldown: unlike the in-memory limiter above, this survives
+    // restarts and works across serverless instances (e.g. Vercel).
+    if (env.userCooldownSec > 0) {
+      const recent = await prisma.mapRequest.findFirst({
+        where: { usernameKey, requestedAt: { gte: new Date(Date.now() - env.userCooldownSec * 1000) } },
+        orderBy: { requestedAt: 'desc' },
+      });
+      if (recent) {
+        const wait = Math.max(
+          1,
+          Math.ceil((recent.requestedAt.getTime() + env.userCooldownSec * 1000 - Date.now()) / 1000),
+        );
+        return fail('COOLDOWN', `${mention} slow down! Try again in ${wait}s.`, 429, wait);
+      }
+    }
+
     const duplicate = await prisma.mapRequest.findFirst({ where: { mapId: tmx.mapId, played: false } });
     if (duplicate) {
       const who = duplicate.usernameKey === usernameKey ? 'you' : `@${duplicate.username}`;
