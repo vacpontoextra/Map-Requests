@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      # Overrides DATABASE_URL from .env so the DB lands on the named volume.
+      DATABASE_URL: "file:/data/requests.db"
+    volumes:
+      - tm-data:/data
+
+volumes:
+  tm-data:

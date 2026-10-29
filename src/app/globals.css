@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens as space-separated RGB so Tailwind can apply alpha (see tailwind.config.ts). */
+:root {
+  --bg: 10 12 20;
+  --surface: 19 23 36;
+  --surface2: 28 33 50;
+  --border: 41 48 70;
+  --fg: 232 236 246;
+  --muted: 140 150 174;
+  --accent: 0 229 255;
+  --accent2: 168 85 247;
+  --good: 52 211 153;
+  --warn: 251 191 36;
+  --bad: 248 113 113;
+  color-scheme: dark;
+}
+
+:root.light {
+  --bg: 243 245 251;
+  --surface: 255 255 255;
+  --surface2: 237 240 248;
+  --border: 214 220 235;
+  --fg: 20 24 38;
+  --muted: 98 108 130;
+  --accent: 0 132 160;
+  --accent2: 124 58 237;
+  --good: 5 150 105;
+  --warn: 180 100 6;
+  --bad: 220 38 38;
+  color-scheme: light;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  background-image:
+    radial-gradient(900px 420px at 10% -10%, rgb(var(--accent) / 0.12), transparent 60%),
+    radial-gradient(800px 400px at 95% 0%, rgb(var(--accent2) / 0.12), transparent 60%);
+  background-repeat: no-repeat;
+  color: rgb(var(--fg));
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-surface2 px-3 py-1.5
+      text-sm font-medium text-fg transition hover:border-accent/60 hover:text-accent
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply border-transparent bg-accent text-bg hover:text-bg hover:brightness-110;
+  }
+  .btn-danger {
+    @apply hover:border-bad/60 hover:text-bad;
+  }
+  .input {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg placeholder:text-muted
+      focus:border-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-border bg-surface2 px-2 py-0.5 text-[11px] text-muted;
+  }
+}

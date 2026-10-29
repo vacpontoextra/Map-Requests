@@ -1,0 +1,42 @@
+// Prisma schema – SQLite by default.
+// To use PostgreSQL/MySQL: change `provider`, set DATABASE_URL, delete the
+// prisma/migrations folder and run `npx prisma migrate dev --name init`.
+// (See README → "Using PostgreSQL".)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model MapRequest {
+  id           Int       @id @default(autoincrement())
+
+  // --- Trackmania.exchange metadata (validated + fetched at request time) ---
+  mapId        Int                       // TMX map ID
+  mapUid       String                    // Nadeo map UID
+  name         String
+  author       String
+  tags         String    @default("[]")  // JSON array of tag names (SQLite has no arrays)
+  thumbnailUrl String?
+  length       String?                   // e.g. "45 secs"
+  difficulty   String?                   // e.g. "Intermediate"
+  awards       Int       @default(0)
+  tmxUrl       String
+
+  // --- Who/when ---
+  username     String                    // Twitch name as displayed
+  usernameKey  String                    // lowercase copy for case-insensitive lookups
+  requestedAt  DateTime  @default(now()) // server time, stored as UTC; date + time both derive from this
+
+  // --- Status ---
+  played       Boolean   @default(false)
+  playedAt     DateTime?
+
+  @@index([played, requestedAt])
+  @@index([mapId])
+  @@index([usernameKey])
+}
